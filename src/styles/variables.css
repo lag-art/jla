@@ -1,0 +1,108 @@
+/* ==========================================================================
+   Juris Leadership Alliance — Design Tokens
+   Palette sampled directly from the JLA seal (public/brand/logo-juris.jpeg):
+   navy #0A1E4E and brass gold #E8C364 are the two measured anchors;
+   every other navy/gold value below is a tint or shade built from them,
+   not a separate guess, so the ramp stays true to the mark.
+   ========================================================================== */
+
+:root {
+  /* ---- Brand anchors (sampled from the seal) ---- */
+  --jla-navy: #0A1E4E;         /* primary — matches the seal's J/L letterforms */
+  --jla-gold: #E8C364;         /* primary accent — matches the scale's lit gold */
+
+  /* ---- Navy ramp (shades/tints of the anchor) ---- */
+  --jla-navy-950: #050D24;     /* deepest — hero backgrounds, footer */
+  --jla-navy-900: #0A1E4E;     /* = --jla-navy, brand-true */
+  --jla-navy-800: #132A63;     /* panels, cards-on-dark, nav dropdown bg */
+  --jla-navy-700: #1F3A7D;     /* borders/dividers on dark surfaces */
+  --jla-navy-100: #E3E8F4;     /* faint navy tint — section backgrounds on light */
+
+  /* ---- Gold ramp ---- */
+  --jla-gold-600: #C79A3A;     /* deeper gold — text-on-light, small type */
+  --jla-gold-500: #E8C364;     /* = --jla-gold, brand-true */
+  --jla-gold-300: #F2DA9C;     /* light gold — hover glow, subtle fills */
+
+  /* ---- Neutrals (cool-cast, paired deliberately with the navy/gold pair) ---- */
+  --jla-paper: #F6F7FA;        /* page background */
+  --jla-white: #FFFFFF;
+  --jla-ink: #171B24;          /* body text on paper */
+  --jla-slate: #59606F;        /* secondary/muted text */
+  --jla-line: #DDE1E8;         /* hairline dividers on paper */
+
+  /* ---- Semantic aliases (use these in components, not raw ramp values) ---- */
+  --color-bg: var(--jla-paper);
+  --color-bg-inverted: var(--jla-navy-950);
+  --color-surface: var(--jla-white);
+  --color-text: var(--jla-ink);
+  --color-text-muted: var(--jla-slate);
+  --color-text-inverted: var(--jla-white);
+  --color-accent: var(--jla-gold);
+  --color-accent-strong: var(--jla-gold-600);
+  --color-border: var(--jla-line);
+
+  /* ---- Type: display serif (seal's engraved-serif wordmark) + body sans + docket mono ---- */
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+
+  /* ---- Type scale (major third, 1.25 ratio, capped for readability) ---- */
+  --fs-xs: 0.75rem;    /* 12px — captions, docket labels */
+  --fs-sm: 0.875rem;   /* 14px — meta, nav links */
+  --fs-base: 1rem;     /* 16px — body copy */
+  --fs-lg: 1.25rem;    /* 20px — card titles */
+  --fs-xl: 1.75rem;    /* 28px — section subheads */
+  --fs-2xl: 2.5rem;    /* 40px — section headings */
+  --fs-3xl: 3.5rem;    /* 56px — hero headline */
+
+  /* ---- Spacing (4px base unit) ---- */
+  --space-xs: 0.5rem;   /* 8px */
+  --space-sm: 1rem;     /* 16px */
+  --space-md: 1.5rem;   /* 24px */
+  --space-lg: 2.5rem;   /* 40px */
+  --space-xl: 4rem;     /* 64px */
+  --space-2xl: 6rem;    /* 96px */
+
+  /* ---- Layout ---- */
+  --container-max: 1200px;
+  --container-padding: clamp(1.25rem, 4vw, 2.5rem);
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+
+  /* ---- Elevation (navy-tinted shadows, not generic black) ---- */
+  --shadow-sm: 0 1px 2px rgba(10, 30, 78, 0.08);
+  --shadow-md: 0 4px 16px rgba(10, 30, 78, 0.12);
+  --shadow-lg: 0 12px 32px rgba(10, 30, 78, 0.18);
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 0.2s;
+  --duration-base: 0.4s;
+  --duration-slow: 0.6s;
+
+  /* ---- Z-index scale (named, so components don't invent arbitrary numbers) ---- */
+  --z-dropdown: 20;
+  --z-sticky-nav: 50;
+  --z-modal: 100;
+
+  /* ---- Legacy aliases (Phase 1 atoms — Button/Modal/SocialLinks — reference
+     these older names; kept as aliases into the new ramp so nothing silently
+     loses its color. New components should use the ramp/semantic tokens above
+     directly instead of these three. ---- */
+  --jla-navy-deep: var(--jla-navy-950);
+  --jla-navy-mid: var(--jla-navy-700);
+  --jla-gold-light: var(--jla-gold-300);
+}
+
+/* ---- Reduced motion: respected site-wide, per frontend accessibility floor ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
