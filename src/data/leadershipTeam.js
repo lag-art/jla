@@ -33,6 +33,7 @@ import leader4 from "../assets/images/leader4.jpg";
 import leader5 from "../assets/images/leader5.jpg";
 import leader6 from "../assets/images/leader6.jpg";
 import leader7 from "../assets/images/leader7.jpg";
+import leader8 from "../assets/images/leader8.jpg";
 
 export const TIERS = {
   executive: { label: "Executive Committee", rank: 1 },
@@ -47,6 +48,7 @@ const leadershipTeam = [
   { id: "organising-secretary", name: "Full Name", role: "Organising Secretary", tier: "official", order: 10, image: leader5, bio: "" },
   { id: "academic-affairs", name: "Full Name", role: "Academic Affairs Representative", tier: "official", order: 20, image: leader6, bio: "" },
   { id: "communications", name: "Full Name", role: "Communications Secretary", tier: "official", order: 30, image: leader7, bio: "" },
+  { id: "Secretary", name: "Full Name", role: "Secretary", tier: "official", order: 40, image: leader8, bio: "" },
 ];
 
 // Sorted by tier rank, then by order within the tier — so components
