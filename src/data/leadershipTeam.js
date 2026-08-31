@@ -41,14 +41,14 @@ export const TIERS = {
 };
 
 const leadershipTeam = [
-  { id: "president", name: "Full Name", role: "President", tier: "executive", order: 10, image: leader1, bio: "" },
-  { id: "vice-president", name: "Full Name", role: "Vice President", tier: "executive", order: 20, image: leader2, bio: "" },
+  { id: "president", name: "John otieno", role: "Party Leader", tier: "executive", order: 10, image: leader1, bio: "" },
+  { id: "vice-president", name: "Anne tuvia", role: "Deputy Party Leader", tier: "executive", order: 20, image: leader2, bio: "" },
   { id: "secretary-general", name: "Full Name", role: "Secretary General", tier: "executive", order: 30, image: leader3, bio: "" },
-  { id: "treasurer", name: "Full Name", role: "Treasurer", tier: "executive", order: 40, image: leader4, bio: "" },
-  { id: "organising-secretary", name: "Full Name", role: "Organising Secretary", tier: "official", order: 10, image: leader5, bio: "" },
-  { id: "academic-affairs", name: "Full Name", role: "Academic Affairs Representative", tier: "official", order: 20, image: leader6, bio: "" },
-  { id: "communications", name: "Full Name", role: "Communications Secretary", tier: "official", order: 30, image: leader7, bio: "" },
-  { id: "Secretary", name: "Full Name", role: "Secretary", tier: "official", order: 40, image: leader8, bio: "" },
+  { id: "treasurer", name: "Duncun Kibet", role: "Treasurer", tier: "executive", order: 40, image: leader4, bio: "" },
+  { id: "organising-secretary", name: "Ronny adhiambo", role: "Organising Secretary", tier: "official", order: 10, image: leader5, bio: "" },
+  { id: "academic-affairs", name: "Leshan brian", role: "Legal Advisor", tier: "official", order: 20, image: leader6, bio: "" },
+  { id: "communications", name: "Hellena monda", role: "Media", tier: "official", order: 30, image: leader7, bio: "" },
+  { id: "Secretary", name: "Alvan moses", role: "Secretary", tier: "official", order: 40, image: leader8, bio: "" },
 ];
 
 // Sorted by tier rank, then by order within the tier — so components

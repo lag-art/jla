@@ -39,7 +39,7 @@ const AppRoutes = () => {
           <Route path={ROUTES.RESOURCES_PUBLICATIONS} element={<ResourcesPublicationsPage />} />
 
           <Route path={ROUTES.MEDIA} element={<MediaPage />} />
-          <Route path={ROUTES.NOMINATIONS} element={<NominationsPage />} />
+          {/* <Route path={ROUTES.NOMINATIONS} element={<NominationsPage />} /> */}
           <Route path={ROUTES.CONTACT} element={<ContactPage />} />
           <Route path={ROUTES.JOIN} element={<JoinPage />} />
 
