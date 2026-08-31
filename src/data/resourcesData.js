@@ -16,7 +16,7 @@ import attendanceImg from "../assets/images/documents/attendanceImg.jpg";
 // they're grouped/displayed. The actual readable text of each document
 // lives in src/data/documents/<id>.js and is loaded by DocumentReader.
 // Keeping them separate means this file stays small and scannable even
-// when the Constitution's 11 articles are fully transcribed.
+// when the Constitution's ten articles are fully transcribed.
 //
 // WHERE FILES LIVE — and why the two are treated differently:
 //   - readable text -> src/data/documents/<id>.js   (bundled, searchable)
@@ -46,10 +46,11 @@ import attendanceImg from "../assets/images/documents/attendanceImg.jpg";
 //             Bump this on amendment instead of renaming the PDF.
 //   meta      Display metadata for cards and reader headers: `sections`
 //             (articles/clauses the document contains) and `readMinutes`.
-//             Both were MEASURED from the source .docx files — word counts
-//             at 200wpm, headings counted by structure — not estimated by
-//             eye. Recompute if a document is amended; a stale count is a
-//             small lie that erodes trust in the document itself.
+//             These are CONFIRMED against the converted modules in
+//             src/data/documents/ — each count is the actual length of the
+//             parsed structure, not an estimate. ResourcesHero sums them
+//             into the totals it displays, so a wrong count here becomes a
+//             wrong claim on the page. Recompute after any amendment.
 //
 // NOT INCLUDED, deliberately: an "adopted on" date. Every source document
 // carries an UNFILLED certification block ("duly adopted by the General
@@ -76,13 +77,13 @@ const resourcesData = [
     status: "available",
     group: "governing",
     summary:
-      "The founding instrument of the Alliance — establishing its name, motto, purpose, membership, leadership, elections, finances, and discipline across eleven articles.",
+      "The founding instrument of the Alliance — establishing its name, motto, purpose, membership, leadership, elections, finances, and discipline across ten articles.",
     route: ROUTES.RESOURCES_CONSTITUTION,
     image: constitutionImg,
     pdfUrl: "/documents/jlaconstitution.pdf",
     version: "2026",
     sectionLabel: "Article",
-    meta: { sections: 11, readMinutes: 7 },
+    meta: { sections: 10, readMinutes: 7 },
   },
   {
     id: "manifesto",
@@ -113,7 +114,7 @@ const resourcesData = [
     pdfUrl: "/documents/jladisciplinary.pdf",
     version: "2026",
     sectionLabel: "Clause",
-    meta: { sections: 15, readMinutes: 2 },
+    meta: { sections: 7, readMinutes: 2 },
   },
   {
     id: "gender-policy",
@@ -146,7 +147,7 @@ const resourcesData = [
     pdfUrl: "/documents/jlaattendance.pdf",
     version: "2026",
     sectionLabel: "Clause",
-    meta: { sections: 12, readMinutes: 4 },
+    meta: { sections: 15, readMinutes: 4 },
   },
 ];
 
