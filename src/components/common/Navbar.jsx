@@ -1,29 +1,33 @@
 import React, { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { FaBars, FaXmark, FaChevronDown } from "react-icons/fa6";
+import { FaBars, FaXmark, FaChevronDown, FaArrowRight } from "react-icons/fa6";
 import navLinks, { ctaLink } from "../../data/navLinks";
 import Button from "./Button";
 
 // common / Navbar
 // Fully routed primary navigation — renders on every page via MainLayout.
 //
+// BREAKPOINT: the desktop nav appears at xl (1280px), not lg (1024px).
+// With seven items plus a long brand name, lg was too early — the brand
+// ran into the first nav item and "Contact Us" overlapped the CTA button.
+// The hamburger now stays until there is genuinely room for the full row.
+//
 // Heuristics baked in:
-//   - Auto-closes the mobile menu and any open dropdown on every route
-//     change, via useLocation — without this, navigating from a mobile
-//     menu link leaves the overlay open behind the new page.
-//   - Auto-closes the Resources dropdown on outside click AND Escape,
-//     tracked with a single ref rather than one listener per interaction.
-//   - Scroll-aware shadow: a flat 0-to-1 toggle would look identical to a
-//     static navbar; this fades a border/shadow in past a small threshold
-//     so the bar visibly "lifts" off the page content once you scroll,
-//     without needing every page to coordinate a transparent hero behind it.
-//   - Body scroll lock while the mobile panel is open, matching the same
-//     pattern used in Modal.jsx, so the page doesn't scroll behind it.
-//   - Logo image is object-position: top so the seal's mark stays visible
-//     even when cropped into a small circular badge — the wordmark text
-//     baked into the bottom of the source image is intentionally cropped
-//     out here since the adjacent text label already carries that role.
+//   - Auto-closes the mobile menu and any open dropdown on route change,
+//     via useLocation — without this, navigating from the mobile menu
+//     leaves the overlay open behind the new page.
+//   - Dropdown closes on outside click AND Escape.
+//   - Scroll-aware shadow so the bar visibly lifts off the page content.
+//   - Body scroll lock while the mobile panel is open, matching Modal.jsx.
+//   - The Resources dropdown renders `childGroups` (grouped, with status
+//     and length per document) when present, falling back to the flat
+//     `children` otherwise — so a nav item without groups is unaffected.
+//     Both shapes come from data/navLinks.js, which derives them from the
+//     document registry rather than hardcoding them here.
+//   - Document length is shown in the menu so nobody opens a 7-minute
+//     read expecting a summary, and unpublished documents say so up front
+//     rather than making someone click through to find out.
 //   - All motion respects prefers-reduced-motion.
 
 const Navbar = () => {
@@ -35,7 +39,6 @@ const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Scroll-aware shadow
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 8);
     onScroll();
@@ -43,13 +46,11 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close everything on route change
   useEffect(() => {
     setMobileOpen(false);
     setDropdownOpen(false);
-  }, [location.pathname]);
+  }, [location.pathname, location.hash]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const onClick = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -60,7 +61,6 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
-  // Escape closes dropdown + mobile panel
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") {
@@ -72,7 +72,6 @@ const Navbar = () => {
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
-  // Body scroll lock while mobile menu is open
   useEffect(() => {
     const previous = document.body.style.overflow;
     document.body.style.overflow = mobileOpen ? "hidden" : previous;
@@ -92,8 +91,8 @@ const Navbar = () => {
         isScrolled ? "shadow-(--shadow-md)" : "shadow-none"
       }`}
     >
-      <div className="max-w-(--container-max) mx-auto px-(--container-padding) flex items-center justify-between h-16 sm:h-20">
-        {/* Brand */}
+      <div className="max-w-(--container-max) mx-auto px-(--container-padding) flex items-center justify-between gap-6 h-16 sm:h-20">
+        {/* Brand — shrink-0 so nav items can never overlap it */}
         <NavLink to="/" className="flex items-center gap-2.5 sm:gap-3 shrink-0">
           <img
             src="/brand/logo-juris.jpeg"
@@ -101,23 +100,26 @@ const Navbar = () => {
             className="w-9 h-9 sm:w-11 sm:h-11 rounded-full object-cover object-top ring-2 ring-(--jla-gold) bg-white"
           />
           <span className="font-(family-name:--font-display) font-semibold text-white leading-tight">
-            <span className="hidden sm:inline text-base lg:text-lg">
+            <span className="hidden sm:inline xl:hidden 2xl:inline text-base lg:text-lg">
               Juris Leadership Alliance
             </span>
+            {/* At xl the full row is tight, so the brand abbreviates rather
+                than pushing nav items into the CTA */}
+            <span className="hidden xl:inline 2xl:hidden text-lg">JLA</span>
             <span className="sm:hidden text-lg">JLA</span>
           </span>
         </NavLink>
 
-        {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-8">
+        {/* Desktop nav — xl and up, see breakpoint note */}
+        <nav className="hidden xl:flex items-center gap-6 min-w-0">
           {navLinks.map((link) =>
-            link.children ? (
+            link.children || link.childGroups ? (
               <div className="relative" ref={dropdownRef} key={link.path}>
                 <button
                   onClick={() => setDropdownOpen((open) => !open)}
                   aria-haspopup="true"
                   aria-expanded={dropdownOpen}
-                  className={`flex items-center gap-1.5 ${linkBase} ${
+                  className={`flex items-center gap-1.5 whitespace-nowrap ${linkBase} ${
                     location.pathname.startsWith(link.path)
                       ? "text-(--jla-gold)"
                       : "text-white/85 hover:text-(--jla-gold)"
@@ -134,35 +136,96 @@ const Navbar = () => {
 
                 <AnimatePresence>
                   {dropdownOpen && (
-                    <motion.ul
+                    <motion.div
                       initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
                       animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
                       exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
                       transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                      className="absolute left-0 top-full mt-3 w-64 bg-white rounded-md shadow-(--shadow-lg) border border-(--jla-line) py-2 z-(--z-dropdown)"
+                      className="absolute left-0 top-full mt-3 w-88 bg-white rounded-md shadow-(--shadow-lg) border border-(--jla-line) overflow-hidden z-(--z-dropdown)"
                     >
-                      {link.children.map((child) => (
-                        <li key={child.path}>
-                          <NavLink
-                            to={child.path}
-                            className={({ isActive }) =>
-                              `block px-4 py-2.5 text-sm transition-colors duration-150 ${
-                                isActive
-                                  ? "text-(--jla-gold-600) bg-(--jla-navy-100)"
-                                  : "text-(--jla-ink) hover:bg-(--jla-navy-100) hover:text-(--jla-gold-600)"
-                              }`
-                            }
+                      {(link.childGroups || [{ label: null, items: link.children }]).map(
+                        (group, gi) => (
+                          <div
+                            key={group.label || gi}
+                            className={gi > 0 ? "border-t border-(--jla-line)" : ""}
                           >
-                            {child.label}
-                          </NavLink>
-                        </li>
-                      ))}
-                    </motion.ul>
+                            {group.label && (
+                              <p className="px-4 pt-3 pb-1.5 font-mono text-[10px] tracking-[0.15em] uppercase text-(--jla-slate)/60">
+                                {group.label}
+                              </p>
+                            )}
+
+                            <ul className="pb-2">
+                              {group.items.map((child) => {
+                                const isPending = child.status === "pending";
+
+                                return (
+                                  <li key={child.path}>
+                                    <NavLink
+                                      to={child.path}
+                                      className={({ isActive }) =>
+                                        `group/item flex items-start justify-between gap-3 px-4 py-2.5 transition-colors duration-150 ${
+                                          isActive
+                                            ? "bg-(--jla-navy-100) text-(--jla-gold-600)"
+                                            : "text-(--jla-ink) hover:bg-(--jla-navy-100)"
+                                        }`
+                                      }
+                                    >
+                                      <span className="min-w-0">
+                                        <span
+                                          className={`block text-sm leading-snug ${
+                                            isPending ? "text-(--jla-slate)" : "font-medium"
+                                          }`}
+                                        >
+                                          {child.label}
+                                        </span>
+
+                                        {child.meta && (
+                                          <span className="block mt-0.5 font-mono text-[10px] text-(--jla-slate)/70">
+                                            {child.meta.sections}{" "}
+                                            {(child.sectionLabel || "section").toLowerCase()}s
+                                            {" · "}~{child.meta.readMinutes} min
+                                          </span>
+                                        )}
+
+                                        {isPending && (
+                                          <span className="block mt-0.5 font-mono text-[10px] uppercase tracking-wide text-(--jla-slate)/60">
+                                            Not yet published
+                                          </span>
+                                        )}
+                                      </span>
+
+                                      <FaArrowRight
+                                        aria-hidden="true"
+                                        className="mt-1 shrink-0 text-[9px] text-(--jla-gold-600) opacity-0 -translate-x-1 transition-all duration-200 group-hover/item:opacity-100 group-hover/item:translate-x-0"
+                                      />
+                                    </NavLink>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
+                        )
+                      )}
+
+                      <NavLink
+                        to={link.path}
+                        className="flex items-center justify-between gap-2 px-4 py-3 bg-(--jla-paper) border-t border-(--jla-line) text-xs font-semibold uppercase tracking-wide text-(--jla-navy) hover:text-(--jla-gold-600) transition-colors duration-150"
+                      >
+                        All resources
+                        <FaArrowRight aria-hidden="true" className="text-[9px]" />
+                      </NavLink>
+                    </motion.div>
                   )}
                 </AnimatePresence>
               </div>
             ) : (
-              <NavLink key={link.path} to={link.path} end={link.path === "/"} className={linkClasses}>
+              <NavLink
+                key={link.path}
+                to={link.path}
+                end={link.path === "/"}
+                className={({ isActive }) => `${linkClasses({ isActive })} whitespace-nowrap`}
+              >
                 {link.label}
               </NavLink>
             )
@@ -170,7 +233,7 @@ const Navbar = () => {
         </nav>
 
         {/* Desktop CTA */}
-        <div className="hidden lg:block">
+        <div className="hidden xl:block shrink-0">
           <Button to={ctaLink.path} variant="primary" size="sm">
             {ctaLink.label}
           </Button>
@@ -181,7 +244,7 @@ const Navbar = () => {
           onClick={() => setMobileOpen((open) => !open)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileOpen}
-          className="lg:hidden flex items-center justify-center w-10 h-10 text-white"
+          className="xl:hidden flex items-center justify-center w-10 h-10 text-white shrink-0"
         >
           {mobileOpen ? <FaXmark size={20} /> : <FaBars size={20} />}
         </button>
@@ -195,7 +258,7 @@ const Navbar = () => {
             animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, height: "auto" }}
             exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:hidden overflow-hidden bg-(--jla-navy-950) border-t border-white/10"
+            className="xl:hidden overflow-hidden bg-(--jla-navy-950) border-t border-white/10 max-h-[75dvh] overflow-y-auto"
           >
             <ul className="flex flex-col px-(--container-padding) py-4 gap-1">
               {navLinks.map((link) => (
@@ -227,6 +290,11 @@ const Navbar = () => {
                               }
                             >
                               {child.label}
+                              {child.status === "pending" && (
+                                <span className="ml-2 font-mono text-[10px] uppercase tracking-wide text-white/40">
+                                  Not yet published
+                                </span>
+                              )}
                             </NavLink>
                           </li>
                         ))}
