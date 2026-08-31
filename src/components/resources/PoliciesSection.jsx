@@ -56,6 +56,25 @@ import attendancePolicy, { sanctionLadder } from "../../data/documents/attendanc
 //   - Only one panel open at a time on the assumption people read one
 //     policy at a time; opening a second closes the first, which keeps
 //     the page navigable rather than becoming an endless scroll.
+//   - Cover images come from the registry (src/assets/images/documents/,
+//     imported so Vite fingerprints them) and render at a fixed 3:4 ratio
+//     so the panel header never jumps as images load. A policy without an
+//     `image` simply renders no thumbnail — the header reflows rather than
+//     leaving a grey box, which matters because the Manifesto and any
+//     future document may not have artwork yet.
+//   - alt="" on the covers: they're decorative. The document title sits
+//     immediately beside them as real text, so describing the image would
+//     make a screen reader announce the same thing twice.
+//   - Panel header layout is grouped, not flat. Cover and text are ALWAYS
+//     a row together (they belong to each other); the actions are a
+//     separate group that sits below them until lg, where there's room to
+//     put everything on one line. A flat flex-col at mobile stranded the
+//     64px thumbnail alone on its own line above the title, which read as
+//     three disconnected fragments rather than one card.
+//   - Action buttons go full-width on mobile (flex-1) so they're proper
+//     tap targets, and the PDF label stops being hidden — on a phone a
+//     lone download glyph is a guess, and this is the one control that
+//     leaves the site.
 
 const DOC_MODULES = {
   "disciplinary-act": disciplinaryAct,
@@ -106,7 +125,7 @@ const Deadlines = () => (
     </p>
     <ul className="divide-y divide-(--jla-line)">
       {deadlines.map((d) => (
-        <li key={d.label} className="flex items-baseline justify-between gap-4 px-4 py-2.5">
+        <li key={d.label} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-4 py-2.5">
           <span className="text-sm text-(--jla-navy)">{d.label}</span>
           <span className="flex items-baseline gap-2 shrink-0">
             <span className="font-(family-name:--font-display) font-semibold text-(--jla-gold-600)">
@@ -224,64 +243,86 @@ const PoliciesSection = () => {
                 key={policy.id}
                 id={policy.id}
                 {...reveal}
-                className="scroll-mt-[calc(var(--sticky-nav-offset,5rem)+1.5rem)] rounded-md border border-(--jla-line) bg-white overflow-hidden"
+                className={`scroll-mt-[calc(var(--sticky-nav-offset,5rem)+1.5rem)] rounded-md border bg-white overflow-hidden transition-colors duration-300 ${
+                  isOpen
+                    ? "border-(--jla-gold) shadow-(--shadow-md)"
+                    : "border-(--jla-line) hover:border-(--jla-slate)/40"
+                }`}
               >
                 {/* Panel header — always visible, always scannable */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-5 sm:p-6">
-                  <div className="flex-1 min-w-0">
-                    <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-(--jla-gold-600)">
-                      {policy.tag}
-                    </span>
-                    <h3 className="font-(family-name:--font-display) font-semibold text-(--jla-navy) text-lg sm:text-xl leading-snug mt-1">
-                      {label}
-                    </h3>
-                    <p className="text-sm text-(--jla-slate) leading-relaxed mt-1.5 max-w-2xl">
-                      {policy.summary}
-                    </p>
+                <div className="p-5 sm:p-6">
+                  <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6">
+                    {/* Cover + text stay together at every width */}
+                    <div className="flex gap-4 flex-1 min-w-0">
+                      {policy.image && (
+                        <div className="w-16 sm:w-20 lg:w-24 shrink-0">
+                          <img
+                            src={policy.image}
+                            alt=""
+                            loading="lazy"
+                            className="w-full aspect-3/4 object-cover rounded-sm border border-(--jla-line) shadow-(--shadow-sm)"
+                          />
+                        </div>
+                      )}
 
-                    {policy.meta && (
-                      <span className="flex items-center gap-4 mt-2.5 font-mono text-[10px] text-(--jla-slate)/70">
-                        <span className="flex items-center gap-1">
-                          <FaFileLines aria-hidden="true" />
-                          {policy.meta.sections} {policy.sectionLabel?.toLowerCase() || "section"}s
+                      <div className="flex-1 min-w-0">
+                        <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-(--jla-gold-600)">
+                          {policy.tag}
                         </span>
-                        <span className="flex items-center gap-1">
-                          <FaClock aria-hidden="true" />~{policy.meta.readMinutes} min
-                        </span>
-                      </span>
-                    )}
-                  </div>
+                        <h3 className="font-(family-name:--font-display) font-semibold text-(--jla-navy) text-lg sm:text-xl leading-snug mt-1">
+                          {label}
+                        </h3>
+                        <p className="text-sm text-(--jla-slate) leading-relaxed mt-1.5 max-w-2xl">
+                          {policy.summary}
+                        </p>
 
-                  <div className="flex items-center gap-2 shrink-0">
-                    {policy.pdfUrl && (
-                      <a
-                        href={policy.pdfUrl}
-                        download
-                        aria-label={`Download ${label} as PDF`}
-                        className="inline-flex items-center gap-2 rounded-sm border border-(--jla-navy) px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-(--jla-navy) hover:bg-(--jla-navy) hover:text-white transition-colors duration-200"
+                        {policy.meta && (
+                          <span className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2.5 font-mono text-[10px] text-(--jla-slate)/70">
+                            <span className="flex items-center gap-1">
+                              <FaFileLines aria-hidden="true" />
+                              {policy.meta.sections}{" "}
+                              {policy.sectionLabel?.toLowerCase() || "section"}s
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <FaClock aria-hidden="true" />~{policy.meta.readMinutes} min
+                            </span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Actions — full-width tap targets until lg */}
+                    <div className="flex items-stretch gap-2 lg:shrink-0">
+                      {policy.pdfUrl && (
+                        <a
+                          href={policy.pdfUrl}
+                          download
+                          aria-label={`Download ${label} as PDF`}
+                          className="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 rounded-sm border border-(--jla-navy) px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-(--jla-navy) hover:bg-(--jla-navy) hover:text-white transition-colors duration-200"
+                        >
+                          <FaDownload aria-hidden="true" />
+                          PDF
+                        </a>
+                      )}
+                      <button
+                        onClick={() => setOpenId(isOpen ? null : policy.id)}
+                        aria-expanded={isOpen}
+                        aria-controls={`${policy.id}-body`}
+                        className="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 rounded-sm bg-(--jla-navy) px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-(--jla-navy-800) transition-colors duration-200"
                       >
-                        <FaDownload aria-hidden="true" />
-                        <span className="hidden sm:inline">PDF</span>
-                      </a>
-                    )}
-                    <button
-                      onClick={() => setOpenId(isOpen ? null : policy.id)}
-                      aria-expanded={isOpen}
-                      aria-controls={`${policy.id}-body`}
-                      className="inline-flex items-center gap-2 rounded-sm bg-(--jla-navy) px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-(--jla-navy-800) transition-colors duration-200"
-                    >
-                      {isOpen ? "Close" : "Read"}
-                      <FaChevronDown
-                        aria-hidden="true"
-                        className={`text-[10px] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-                      />
-                    </button>
+                        {isOpen ? "Close" : "Read in full"}
+                        <FaChevronDown
+                          aria-hidden="true"
+                          className={`text-[10px] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                        />
+                      </button>
+                    </div>
                   </div>
                 </div>
 
                 {/* At a glance — visible without opening the full text */}
                 {Highlight && (
-                  <div className="px-5 sm:px-6 pb-5 sm:pb-6">
+                  <div className="px-5 sm:px-6 pb-5 sm:pb-6 -mt-1">
                     <Highlight />
                   </div>
                 )}
