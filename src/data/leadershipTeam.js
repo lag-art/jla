@@ -41,9 +41,9 @@ export const TIERS = {
 };
 
 const leadershipTeam = [
-  { id: "president", name: "John otieno", role: "Party Leader", tier: "executive", order: 10, image: leader1, bio: "" },
+  { id: "president", name: "John otieno", role: "Party Leader", tier: "executive", order: 10, image: leader1, bio: "Lets make a better future for all." },
   { id: "vice-president", name: "Anne tuvia", role: "Deputy Party Leader", tier: "executive", order: 20, image: leader2, bio: "" },
-  { id: "secretary-general", name: "Full Name", role: "Secretary General", tier: "executive", order: 30, image: leader3, bio: "" },
+  { id: "secretary-general", name: "Oscar oluoch", role: "Secretary General", tier: "executive", order: 30, image: leader3, bio: "" },
   { id: "treasurer", name: "Duncun Kibet", role: "Treasurer", tier: "executive", order: 40, image: leader4, bio: "" },
   { id: "organising-secretary", name: "Ronny adhiambo", role: "Organising Secretary", tier: "official", order: 10, image: leader5, bio: "" },
   { id: "academic-affairs", name: "Leshan brian", role: "Legal Advisor", tier: "official", order: 20, image: leader6, bio: "" },
