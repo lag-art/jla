@@ -6,40 +6,39 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { FaQuoteLeft, FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import SectionTitle from "../common/SectionTitle";
-import ImagePlaceholder from "../common/ImagePlaceholder";
 import testimonials from "../../data/testimonials";
 
 // home / Testimonials
-// Sixth homepage section — member voices. See data/testimonials.js for an
-// important note: content there is intentionally obvious placeholder
-// (matching leadershipTeam.js's "Full Name" convention), not fabricated
-// quotes, since a testimonial is a factual claim about a real person.
+// Real, named students quoted with their consent — see the note at the
+// top of data/testimonials.js before editing any entry.
 //
 // Heuristics baked in:
-//   - Autoplay pauses on hover AND on keyboard focus (disableOnInteraction:
-//     false + explicit focus handlers) — an autoplaying carousel that
-//     keeps advancing while someone is mid-read, or mid-tab-navigation
-//     through it, actively fights the reader rather than helping them.
-//   - Autoplay is skipped entirely under prefers-reduced-motion — not
-//     just slowed down. A carousel that moves itself is motion, same
-//     category as any animation, and reduced-motion means "don't move
-//     things without me asking," not "move them more gently."
-//   - Reuses Swiper (already loaded on this page via LeadershipPreview),
-//     so this section's carousel costs effectively zero additional
-//     bundle size — the library is already paid for on this route.
-//   - Large decorative quote-mark icon is aria-hidden; the actual
-//     accessible content is the quote text + cited name, read normally.
-//   - Custom prev/next buttons (not Swiper's default arrows) so they can
-//     be styled to match the site's button language and hidden on mobile
-//     where swipe gesture is the natural interaction anyway.
-//   - Uses SectionTitle's tone="dark" prop — added to SectionTitle.jsx
-//     itself as part of this build, since that component previously had
-//     no dark-background support at all and would have rendered
-//     near-invisible navy-on-navy text here otherwise.
+//   - `loop` is on because there are five testimonials shown two at a
+//     time: without it the final slide sits half-empty with one orphaned
+//     card. Looping also means the carousel never dead-ends, so someone
+//     paging through doesn't hit an invisible wall.
+//   - Autoplay pauses on hover and doesn't disable itself after
+//     interaction, so a reader who swipes back isn't fighting a carousel
+//     that has stopped cooperating.
+//   - Autoplay is skipped ENTIRELY under prefers-reduced-motion, not
+//     slowed. A carousel advancing itself is motion in the same category
+//     as any animation.
+//   - Cards are equal height (h-full + flex) so a 108-character quote and
+//     a 139-character one don't produce ragged card bottoms side by side.
+//   - Portraits are shown at a size where a face is actually legible.
+//     These are real people vouching publicly for the Alliance; rendering
+//     them as tiny avatars undercuts the point of naming them.
+//   - Names and years are rendered as a <figcaption> inside <figure>, so
+//     the attribution is programmatically tied to the quote rather than
+//     being loose text that happens to sit underneath it.
+//   - Reuses Swiper, already loaded on this page by LeadershipPreview, so
+//     this section costs effectively no extra bundle.
 
 const Testimonials = () => {
   const shouldReduceMotion = useReducedMotion();
   const swiperRef = useRef(null);
+
+  if (testimonials.length === 0) return null;
 
   const reveal = shouldReduceMotion
     ? {}
@@ -57,8 +56,8 @@ const Testimonials = () => {
           <SectionTitle
             docket="06"
             eyebrow="Member Voices"
-            title="What our members say."
-            description="Real reflections from students who've walked through JLA — in their own words."
+            title="What law students say."
+            description="Members of the faculty, in their own words, on why they back the Alliance."
             tone="dark"
           />
         </motion.div>
@@ -67,6 +66,7 @@ const Testimonials = () => {
           <Swiper
             modules={[Autoplay, Pagination, Keyboard, A11y]}
             onSwiper={(swiper) => (swiperRef.current = swiper)}
+            loop={testimonials.length > 2}
             autoplay={
               shouldReduceMotion
                 ? false
@@ -80,23 +80,28 @@ const Testimonials = () => {
             className="pb-12!"
           >
             {testimonials.map((t) => (
-              <SwiperSlide key={t.id}>
+              <SwiperSlide key={t.id} className="h-auto!">
                 <figure className="h-full flex flex-col gap-5 rounded-md border border-white/10 bg-white/5 p-6 sm:p-8">
-                  <FaQuoteLeft aria-hidden="true" className="text-(--jla-gold) text-2xl" />
+                  <FaQuoteLeft aria-hidden="true" className="text-(--jla-gold) text-2xl shrink-0" />
+
                   <blockquote className="flex-1 text-base sm:text-lg leading-relaxed text-white/90">
-                    “{t.quote}”
+                    {t.quote}
                   </blockquote>
-                  <figcaption className="flex items-center gap-3 pt-2 border-t border-white/10">
-                    <ImagePlaceholder
+
+                  <figcaption className="flex items-center gap-4 pt-4 border-t border-white/10">
+                    <img
                       src={t.image}
-                      ratio="1/1"
-                      rounded="full"
                       alt={t.name}
-                      className="w-11 h-11 shrink-0"
+                      loading="lazy"
+                      className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover shrink-0 ring-2 ring-(--jla-gold)/40"
                     />
-                    <div>
-                      <p className="font-semibold text-sm text-white">{t.name}</p>
-                      <p className="text-xs text-white/60">{t.role}</p>
+                    <div className="min-w-0">
+                      <p className="font-(family-name:--font-display) font-semibold text-white leading-tight">
+                        {t.name}
+                      </p>
+                      <p className="font-mono text-[11px] tracking-wide uppercase text-(--jla-gold)/80 mt-0.5">
+                        {t.role}
+                      </p>
                     </div>
                   </figcaption>
                 </figure>
