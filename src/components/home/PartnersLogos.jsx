@@ -1,73 +1,109 @@
 import React from "react";
-import law1 from "../../assets/images/law1.jpg";
-import law2 from "../../assets/images/law2.jpg";
-import law3 from "../../assets/images/law3.jpg";
-import law4 from "../../assets/images/law4.jpg";
+import littlebox from "../../assets/images/littlebox.jpg";
+import rebirth from "../../assets/images/rebirth.jpg";
+import rotary from "../../assets/images/rotary.jpg";
+import sayds from "../../assets/images/sayds.jpg";
+import unicaf from "../../assets/images/unicaf.jpg";
 
 // home / PartnersLogos
-// Seventh homepage section — a "trusted by" logo strip between
-// Testimonials and JoinCTA.
+// Trust strip between Testimonials and JoinCTA.
 //
-// Honest-content note: these 4 images are NOT paired with invented
-// partner organization names. A logo strip implies a real, current
-// relationship with whoever's mark is shown — attaching a fabricated
-// "In Partnership with [Institution]" label to an image would be the
-// same false-endorsement problem as a fabricated testimonial, just
-// applied to an institution instead of a person. If/when these need
-// real names or links, add a `name`/`href` field per entry then — don't
-// invent one now to make the section feel more complete than it is.
+// THESE ARE REAL, NAMED ORGANISATIONS NOW
+// Each entry names an actual body the Alliance works with, which makes
+// this section a set of factual claims about real relationships — not
+// decoration. Two things follow:
+//   - Only list organisations with a genuine, current relationship. A
+//     logo strip is read as "these bodies are associated with us."
+//   - Many organisations (Rotary especially) publish brand guidelines
+//     governing how their mark may be reproduced. Worth confirming use is
+//     permitted before launch; that's a permissions question, not a code
+//     one, but it belongs next to the logos rather than nowhere.
+// `name` is used as the alt text, so it must be the organisation's real
+// name — verify exact legal/preferred naming rather than shortening it
+// for layout. Add `href` to link a logo to its site; entries without one
+// render as plain images rather than dead links.
 //
 // Heuristics baked in:
-//   - Continuous marquee loop is pure CSS (the `marquee` keyframe in
-//     styles/index.css), not JS-driven — no width measurement, no
-//     ResizeObserver, no animation library needed for a simple infinite
-//     scroll. The track renders the logo array TWICE back-to-back; at
-//     -50% translateX the second copy sits exactly where the first
-//     started, so the loop has no visible seam or reset-jump.
-//   - motion-safe:/motion-reduce: are Tailwind's built-in CSS media-query
-//     variants — the animation simply doesn't apply under
-//     prefers-reduced-motion, no JS `useReducedMotion` check needed here
-//     (unlike Testimonials, which needs JS because Swiper's autoplay is
-//     JS-driven; this animation is pure CSS, so a CSS media query alone
-//     is sufficient and simpler).
-//   - Hover pauses the scroll (`[animation-play-state:paused]`) so a
-//     visitor who stops to actually look at one logo isn't fighting a
-//     strip that keeps sliding out from under their cursor.
-//   - The duplicated second copy of the track is `aria-hidden` — a
-//     screen reader should hear each logo once, not twice, even though
-//     it's visually rendered twice for the seamless loop.
-//   - Grayscale-by-default, full-color-on-hover is the standard trust-bar
-//     treatment: it visually de-emphasizes the strip as supporting
-//     content rather than competing with the section's actual headline
-//     content above and below it.
+//   - alt is the ORGANISATION NAME, not "partner logo". A screen reader
+//     hearing "partner organization mark" five times learns nothing; the
+//     names are the entire content of this section.
+//   - Continuous marquee is pure CSS (the `marquee` keyframe in
+//     styles/index.css) — no width measurement, no ResizeObserver, no
+//     animation library. The track renders the array TWICE back to back;
+//     at -50% translateX the second copy sits exactly where the first
+//     began, so the loop has no seam.
+//   - motion-safe:/motion-reduce: are CSS media-query variants, so the
+//     animation simply doesn't apply under prefers-reduced-motion — no JS
+//     check needed here, unlike Testimonials where Swiper's autoplay is
+//     JS-driven.
+//   - Hover pauses the scroll, so someone stopping to read a mark isn't
+//     fighting a strip sliding out from under their cursor. Focus pauses
+//     it too — a keyboard user tabbing to a linked logo shouldn't have it
+//     travel away mid-tab.
+//   - The duplicated track is aria-hidden with empty alts, so each
+//     organisation is announced once despite rendering twice.
+//   - Grayscale until hover keeps the strip as supporting evidence rather
+//     than five competing brand colours next to the section's own
+//     content — and makes wildly different logo palettes sit together.
 
 const PARTNERS = [
-  { id: 1, src: law1, alt: "Partner organization mark" },
-  { id: 2, src: law2, alt: "Partner organization mark" },
-  { id: 3, src: law3, alt: "Partner organization mark" },
-  { id: 4, src: law4, alt: "Partner organization mark" },
+  { id: "littlebox", name: "Little Box", src: littlebox },
+  { id: "rebirth", name: "Rebirth", src: rebirth },
+  { id: "rotary", name: "Rotary", src: rotary },
+  { id: "sayds", name: "SAYDS", src: sayds },
+  { id: "unicaf", name: "Unicaf", src: unicaf },
+  { id: "littlebox", name: "Little Box", src: littlebox },
+  { id: "rebirth", name: "Rebirth", src: rebirth },
+  { id: "rotary", name: "Rotary", src: rotary },
+  { id: "sayds", name: "SAYDS", src: sayds },
+  { id: "unicaf", name: "Unicaf", src: unicaf },
 ];
 
-const LogoTrack = ({ hidden = false }) => (
+const Logo = ({ partner, decorative }) => {
+  const img = (
+    <img
+      src={partner.src}
+      alt={decorative ? "" : partner.name}
+      loading="lazy"
+      className="h-10 sm:h-14 w-auto max-w-36 sm:max-w-44 object-contain grayscale opacity-60 transition-all duration-300 hover:grayscale-0 hover:opacity-100"
+    />
+  );
+
+  // Linked only when a real URL exists — see note on dead links above.
+  if (partner.href && !decorative) {
+    return (
+      <a
+        href={partner.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${partner.name} (opens in a new tab)`}
+        className="shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--jla-gold) focus-visible:ring-offset-4 focus-visible:ring-offset-(--jla-paper) rounded-sm"
+      >
+        {img}
+      </a>
+    );
+  }
+
+  return <span className="shrink-0">{img}</span>;
+};
+
+const LogoTrack = ({ decorative = false }) => (
   <div
     className="flex items-center gap-12 sm:gap-16 pr-12 sm:pr-16 shrink-0"
-    aria-hidden={hidden}
+    aria-hidden={decorative || undefined}
   >
     {PARTNERS.map((partner) => (
-      <img
-        key={partner.id}
-        src={partner.src}
-        alt={hidden ? "" : partner.alt}
-        className="h-10 sm:h-14 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
-      />
+      <Logo key={partner.id} partner={partner} decorative={decorative} />
     ))}
   </div>
 );
 
 const PartnersLogos = () => {
+  if (PARTNERS.length === 0) return null;
+
   return (
     <section
-      aria-label="Our partner organizations"
+      aria-label="Organisations the Alliance works with"
       className="bg-(--jla-paper) border-y border-(--jla-line) py-10 sm:py-12"
     >
       <div className="max-w-(--container-max) mx-auto px-(--container-padding) mb-6 sm:mb-8">
@@ -76,8 +112,8 @@ const PartnersLogos = () => {
         </p>
       </div>
 
-      <div className="group relative overflow-hidden">
-        {/* Edge fade so logos entering/exiting feel intentional, not clipped */}
+      {/* focus-within pauses the marquee for keyboard users too */}
+      <div className="group relative overflow-hidden focus-within:[&_.marquee-track]:[animation-play-state:paused]">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-24 bg-linear-to-r from-(--jla-paper) to-transparent z-10"
@@ -87,9 +123,9 @@ const PartnersLogos = () => {
           className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-24 bg-linear-to-l from-(--jla-paper) to-transparent z-10"
         />
 
-        <div className="flex w-max motion-safe:animate-[marquee_24s_linear_infinite] motion-reduce:animate-none group-hover:[animation-play-state:paused]">
+        <div className="marquee-track flex w-max motion-safe:animate-[marquee_30s_linear_infinite] motion-reduce:animate-none group-hover:[animation-play-state:paused]">
           <LogoTrack />
-          <LogoTrack hidden />
+          <LogoTrack decorative />
         </div>
       </div>
     </section>
