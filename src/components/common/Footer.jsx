@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { FaArrowUp } from "react-icons/fa6";
 import { footerColumns, contactInfo } from "../../data/footerLinks";
 import SocialLinks from "./SocialLinks";
+import logo from "../../assets/images/logo.jpeg";
 
 // common / Footer
 // Renders on every page via MainLayout. Sourced entirely from
@@ -49,7 +50,7 @@ const Footer = () => {
           <div className="sm:col-span-2 lg:col-span-1">
             <NavLink to="/" className="flex items-center gap-3 mb-4">
               <img
-                src="/brand/logo-juris.jpeg"
+                src="../../assets/images/logo.jpeg"
                 alt="Juris Leadership Alliance seal"
                 className="w-11 h-11 rounded-full object-cover object-top ring-2 ring-(--jla-gold) bg-white shrink-0"
               />

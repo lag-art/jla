@@ -67,7 +67,7 @@ const MainLayout = () => {
 
       <NoticeBanner />
 
-      <div ref={navWrapperRef}>
+      <div ref={navWrapperRef} className="sticky top-0 z-(--z-sticky-nav)">
         <Navbar />
       </div>
 
