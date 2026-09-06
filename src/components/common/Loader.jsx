@@ -59,7 +59,7 @@ const Loader = () => {
             }
           />
           <span className="font-mono text-[11px] sm:text-xs tracking-[0.15em] uppercase text-(--jla-slate)">
-            Loading
+            Juris Leadership Alliance
           </span>
         </>
       )}

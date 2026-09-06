@@ -20,7 +20,7 @@ import ROUTES from "../routes/routePaths";
 export const notices = [
   {
     id: "elections-2026",
-    message: "Nominations for the 2026 Leadership Cycle are open.",
+    message: "Elections for the 2026 Leadership Cycle are approaching.",
     ctaLabel: "Read the rules",
     ctaPath: `${ROUTES.RESOURCES_CONSTITUTION}#article-5`,
     deadline: "2026-12-31T23:59:59Z",
