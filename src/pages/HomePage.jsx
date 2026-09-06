@@ -8,6 +8,7 @@ import Testimonials from "../components/home/Testimonials";
 import PartnersLogos from "../components/home/PartnersLogos";
 import JoinCTA from "../components/home/JoinCTA";
 import ContactPreview from "../components/home/ContactPreview";
+import EventsSection from "../components/media/EventsSection";
 
 // HomePage
 // TODO: Wire up real content/data for HomePage.
@@ -19,7 +20,8 @@ const HomePage = () => {
       <AboutPreview />
       <LeadershipPreview />
       <ResourcesPreview />
-      <MediaPreview />
+      <EventsSection />
+      <MediaPreview />      
       <Testimonials />
       <PartnersLogos />
       <JoinCTA />
