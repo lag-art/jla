@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { FaPlay, FaCircleInfo, FaFilm } from "react-icons/fa6";
+import { FaPlay, FaCircleInfo, FaFilm, FaXmark } from "react-icons/fa6";
 import SectionTitle from "../common/SectionTitle";
 import ImagePlaceholder from "../common/ImagePlaceholder";
 import mediaItems from "../../data/mediaItems";
@@ -9,44 +9,59 @@ import mediaItems from "../../data/mediaItems";
 // The Media page's watch experience.
 //
 // SCOPE — why this isn't a duplicate of GalleryGrid
-// GalleryGrid is for BROWSING: thumbnails, filters, a lightbox that shows
-// a still. This section is for WATCHING: one video at a time, played in
-// place, at a size worth watching. If this ever grows a thumbnail grid
-// with filters, the two have collapsed into one and this should be
-// deleted rather than maintained alongside it.
+// GalleryGrid is for BROWSING: a grid, filters, a lightbox. This is for
+// WATCHING: one recording at a time, at a size worth watching, with a
+// playlist when there's more than one. GalleryGrid can play a video too,
+// but incidentally — you opened a tile. Here it's the point. If this ever
+// grows a filtered thumbnail grid, the two have collapsed and this should
+// be deleted rather than maintained alongside it.
 //
-// HONEST STATE — read before adding a fake player
-// Videos in data/mediaItems.js currently carry a thumbnail but no source.
-// A play button that does nothing when tapped is worse than no player at
-// all, so a video without a source renders an explicit "not available
-// yet" panel instead. Add one of these fields to a video item and this
-// section starts playing it, no code change:
-//   youtubeId  — e.g. "dQw4w9WgXcQ"
-//   vimeoId    — e.g. "76979871"
-//   videoUrl   — a direct .mp4/.webm URL for self-hosted files
+// SOURCES — three kinds, detected not configured
+// A video item plays when it carries any ONE of these:
+//   videoUrl   self-hosted file (this is what data/mediaItems.js uses)
+//   youtubeId  → nocookie embed
+//   vimeoId    → Vimeo player
+// Presence of a source is the only thing that decides whether a real
+// player renders. An item without one keeps its poster and says plainly
+// that it isn't published — a play button that does nothing when tapped
+// is worse than no player at all.
+//
+// MOBILE: playsInline IS NOT OPTIONAL
+// Without it, iOS Safari takes any <video> fullscreen the moment it
+// plays, ejecting the visitor out of the page. It's one attribute and the
+// difference between watching in context and being thrown into a system
+// player.
 //
 // Heuristics baked in:
-//   - Self-hiding: renders nothing at all when there are no videos. An
-//     empty "Watch" section with a placeholder is worse than no section.
-//   - CLICK-TO-LOAD FACADE, not an always-embedded iframe. A YouTube embed
-//     pulls hundreds of KB and sets third-party cookies on page load, for
-//     a video most visitors will never play. This shows the real thumbnail
-//     and only mounts the iframe once someone actually presses play — and
-//     uses youtube-nocookie so a visitor who never plays is never tracked.
-//   - Switching videos unmounts the player, so selecting a second video
-//     doesn't leave the first one playing audio underneath.
-//   - The playlist only renders when there's more than one video; a
-//     playlist of one is a list that can't be used.
-//   - Thumbnails keep a fixed 16:9 box so the section never jumps as
-//     images load.
+//   - Self-hiding when there are no videos at all.
+//   - CLICK-TO-LOAD FACADE for embeds: a YouTube iframe pulls hundreds of
+//     KB and sets third-party cookies on page load, for a video most
+//     visitors never play. The iframe only mounts once someone presses
+//     play, and uses youtube-nocookie so a visitor who never plays is
+//     never tracked. Self-hosted files get the same treatment via
+//     preload="metadata" — dimensions and duration, not the whole file.
+//   - object-contain on the player, not cover: a vertical phone video in
+//     a 16:9 frame letterboxes rather than having its top and bottom
+//     cropped off. Better bars than a beheaded subject.
+//   - Switching videos unmounts the current player, so selecting a second
+//     never leaves the first playing audio underneath.
+//   - A single video gets a capped, centred player. Stretched across a
+//     1200px container it becomes a 675px-tall wall; the playlist layout
+//     is what justifies full width.
+//   - Playing shows a "close" control that returns to the poster — with
+//     no playlist to switch away to, a single video otherwise has no way
+//     back short of reloading.
+//   - The playlist only renders with more than one video; a playlist of
+//     one is a list that can't be used.
 
 const getVideos = () => mediaItems.filter((m) => m.type === "video");
 
 const hasSource = (v) => Boolean(v?.youtubeId || v?.vimeoId || v?.videoUrl);
 
 const embedUrl = (v) => {
+  // autoplay is set because the visitor has just pressed play — this is a
+  // response to a user gesture, not an unprompted autoplay.
   if (v.youtubeId) {
-    // nocookie + autoplay, since the user has explicitly pressed play
     return `https://www.youtube-nocookie.com/embed/${v.youtubeId}?autoplay=1&rel=0`;
   }
   if (v.vimeoId) return `https://player.vimeo.com/video/${v.vimeoId}?autoplay=1`;
@@ -59,15 +74,15 @@ const VideoSection = () => {
   const [activeId, setActiveId] = useState(videos[0]?.id ?? null);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Nothing to watch — see self-hiding note.
   if (videos.length === 0) return null;
 
   const active = videos.find((v) => v.id === activeId) || videos[0];
   const playable = hasSource(active);
   const iframeSrc = playable ? embedUrl(active) : null;
+  const hasPlaylist = videos.length > 1;
 
   const selectVideo = (id) => {
-    setIsPlaying(false); // unmount the current player — see note above
+    setIsPlaying(false); // unmount the current player before switching
     setActiveId(id);
   };
 
@@ -90,19 +105,22 @@ const VideoSection = () => {
           docket="19"
           eyebrow="Watch"
           title="See it for yourself."
-          description="Recordings from the Alliance's summits, orientations, and proceedings."
+          description="Recordings from the Alliance's events and proceedings."
           tone="dark"
         />
 
         <motion.div
           {...reveal}
           className={`grid gap-6 lg:gap-8 mt-10 sm:mt-12 ${
-            videos.length > 1 ? "lg:grid-cols-[1.9fr_1fr]" : "lg:grid-cols-1"
+            hasPlaylist ? "lg:grid-cols-[1.9fr_1fr]" : "lg:grid-cols-1"
           }`}
         >
-          {/* Player / facade */}
-          <div>
-            <div className="relative w-full overflow-hidden rounded-md bg-(--jla-navy-800) border border-(--jla-navy-700)" style={{ aspectRatio: "16 / 9" }}>
+          {/* Player / facade — capped when it stands alone, see notes */}
+          <div className={hasPlaylist ? "" : "w-full max-w-4xl mx-auto"}>
+            <div
+              className="relative w-full overflow-hidden rounded-md bg-black border border-(--jla-navy-700)"
+              style={{ aspectRatio: "16 / 9" }}
+            >
               {isPlaying && iframeSrc ? (
                 <iframe
                   src={iframeSrc}
@@ -113,13 +131,17 @@ const VideoSection = () => {
                   style={{ border: 0 }}
                 />
               ) : isPlaying && active.videoUrl ? (
-                // Self-hosted file — controls, no autoplay surprises
+                // Self-hosted. playsInline keeps iOS from hijacking to
+                // fullscreen; object-contain letterboxes a vertical clip
+                // instead of cropping it.
                 <video
                   src={active.videoUrl}
                   poster={active.image}
                   controls
                   autoPlay
-                  className="absolute inset-0 w-full h-full bg-black"
+                  playsInline
+                  preload="metadata"
+                  className="absolute inset-0 w-full h-full object-contain bg-black"
                 >
                   Your browser doesn’t support embedded video.
                 </video>
@@ -144,8 +166,14 @@ const VideoSection = () => {
                       aria-label={`Play ${active.title}`}
                       className="group absolute inset-0 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--jla-gold) focus-visible:ring-inset"
                     >
-                      <span className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/90 text-(--jla-navy-950) group-hover:bg-(--jla-gold) group-hover:scale-105 transition-all duration-200">
-                        <FaPlay aria-hidden="true" className="ml-1 text-xl sm:text-2xl" />
+                      <span className="relative flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/90 text-(--jla-navy-950) group-hover:bg-(--jla-gold) group-hover:scale-105 transition-all duration-200">
+                        {/* Ring pulse — draws the eye without moving the
+                            button itself. Motion-safe only. */}
+                        <span
+                          aria-hidden="true"
+                          className="absolute inset-0 rounded-full ring-2 ring-white/50 motion-safe:animate-ping"
+                        />
+                        <FaPlay aria-hidden="true" className="relative ml-1 text-xl sm:text-2xl" />
                       </span>
                     </button>
                   ) : (
@@ -158,13 +186,26 @@ const VideoSection = () => {
                         />
                         <span>
                           This recording isn’t published yet — what you’re seeing
-                          is the still. It’ll play here once the video is
+                          is the poster frame. It’ll play here once the video is
                           available.
                         </span>
                       </p>
                     </div>
                   )}
                 </>
+              )}
+
+              {/* Return to poster — without a playlist there'd be no way
+                  back out of the player short of reloading the page */}
+              {isPlaying && (
+                <button
+                  type="button"
+                  onClick={() => setIsPlaying(false)}
+                  aria-label="Close player"
+                  className="absolute top-2 right-2 z-10 flex items-center justify-center w-9 h-9 rounded-full bg-(--jla-navy-950)/70 text-white hover:bg-(--jla-navy-950) transition-colors duration-200"
+                >
+                  <FaXmark aria-hidden="true" className="text-xs" />
+                </button>
               )}
             </div>
 
@@ -179,7 +220,7 @@ const VideoSection = () => {
           </div>
 
           {/* Playlist — only when there's more than one, see note */}
-          {videos.length > 1 && (
+          {hasPlaylist && (
             <div>
               <p className="flex items-center gap-2 font-mono text-[10px] tracking-[0.15em] uppercase text-white/50 mb-3 pb-2 border-b border-white/10">
                 <FaFilm aria-hidden="true" />
@@ -187,16 +228,18 @@ const VideoSection = () => {
                 <span className="ml-auto">{videos.length}</span>
               </p>
 
-              <ul className="flex flex-col gap-2 lg:max-h-104 lg:overflow-y-auto">
+              <ul className="flex flex-col gap-2 lg:max-h-104 lg:overflow-y-auto lg:overscroll-contain">
                 {videos.map((v) => {
                   const isActive = v.id === active.id;
+                  const unpublished = !hasSource(v);
+
                   return (
                     <li key={v.id}>
                       <button
                         type="button"
                         onClick={() => selectVideo(v.id)}
                         aria-current={isActive ? "true" : undefined}
-                        className={`w-full flex items-start gap-3 p-2 rounded-md text-left transition-colors duration-200 ${
+                        className={`w-full flex items-start gap-3 p-2 rounded-md text-left transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--jla-gold) ${
                           isActive ? "bg-white/10" : "hover:bg-white/5"
                         }`}
                       >
@@ -208,8 +251,13 @@ const VideoSection = () => {
                             alt=""
                             className="w-full"
                           />
-                          {!hasSource(v) && (
-                            <span className="absolute inset-0 bg-(--jla-navy-950)/55" />
+                          {unpublished && (
+                            <span aria-hidden="true" className="absolute inset-0 bg-(--jla-navy-950)/55" />
+                          )}
+                          {isActive && !unpublished && (
+                            <span className="absolute inset-0 flex items-center justify-center bg-(--jla-navy-950)/40">
+                              <FaPlay aria-hidden="true" className="text-[10px] text-(--jla-gold)" />
+                            </span>
                           )}
                         </span>
 
@@ -221,7 +269,7 @@ const VideoSection = () => {
                           >
                             {v.title}
                           </span>
-                          {!hasSource(v) && (
+                          {unpublished && (
                             <span className="block mt-0.5 font-mono text-[10px] uppercase tracking-wide text-white/40">
                               Not published yet
                             </span>

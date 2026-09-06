@@ -50,7 +50,7 @@ const Footer = () => {
           <div className="sm:col-span-2 lg:col-span-1">
             <NavLink to="/" className="flex items-center gap-3 mb-4">
               <img
-                src="../../assets/images/logo.jpeg"
+                src={logo}
                 alt="Juris Leadership Alliance seal"
                 className="w-11 h-11 rounded-full object-cover object-top ring-2 ring-(--jla-gold) bg-white shrink-0"
               />
