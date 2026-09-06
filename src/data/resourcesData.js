@@ -9,6 +9,7 @@ import constitutionImg from "../assets/images/documents/constitutionImg.jpg";
 import disciplinaryImg from "../assets/images/documents/disciplinaryImg.jpg";
 import genderImg from "../assets/images/documents/genderImg.jpg";
 import attendanceImg from "../assets/images/documents/attendanceImg.jpg";
+import manifestoImg from "../assets/images/documents/manifesto.jpg";
 
 // resourcesData.js
 //
@@ -95,6 +96,7 @@ const resourcesData = [
     summary:
       "The Alliance's programme of action for the current leadership cycle.",
     route: ROUTES.RESOURCES_MANIFESTO,
+    image: manifestoImg,
     version: "",
     sectionLabel: "Section",
     // No image, pdfUrl, or meta: nothing to measure or link to yet.
