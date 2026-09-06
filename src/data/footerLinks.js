@@ -58,4 +58,7 @@ export const socialLinks = [
   { url: "https://www.instagram.com/juris_cartels?igsh=bW02amxwNW5va3p1" },
   { url: "https://www.tiktok.com/@juris.cartels6?_r=1&_t=ZS-94wuHDwylWb" },
   { url: "https://x.com/juris_cartels" },
+  
 ];
+
+  export const whatsappInvite = "https://chat.whatsapp.com/Dqxjj7GpVL7HSCLZM8tIfP?mode=gi_t";
