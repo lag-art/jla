@@ -1,25 +1,28 @@
 import ROUTES from "../routes/routePaths";
 
 // notices.js
-// Data source for NoticeBanner.jsx. Supports multiple notices; the banner
-// picks the first one currently inside its startsAt/endsAt window and not
-// yet dismissed — publishing or retiring a notice is a data-file edit,
-// never a component edit.
+// Data source for NoticeBanner.jsx. The banner shows the first notice
+// inside its startsAt/endsAt window that hasn't been dismissed.
+//
+// ⚠️ THIS FILE PREVIOUSLY POINTED AT THE NOMINATIONS PAGE.
+// That page has been retired, so the CTA now points at Constitution
+// Article 5 — the actual governing text on elections — rather than a
+// route that no longer exists. A notice whose CTA 404s is worse than no
+// notice, so check `ctaPath` resolves whenever routes change.
 //
 // Fields:
-//   id        - stable, unique. Used as the dismissal key in localStorage.
-//   message   - the banner copy.
-//   ctaLabel / ctaPath - optional action link.
-//   deadline  - optional ISO date; if set, NoticeBanner shows a live
-//               countdown to it.
-//   startsAt / endsAt - ISO date window the notice is eligible to show in.
+//   id        Stable, unique. Used as the dismissal key in localStorage.
+//   message   The banner copy.
+//   ctaLabel / ctaPath  Optional action link.
+//   deadline  Optional ISO date; shows a live countdown.
+//   startsAt / endsAt   ISO window the notice is eligible to show in.
 
 export const notices = [
   {
-    id: "nominations-2026",
-    message: "Nominations for the 2026 Leadership Cycle are now open.",
-    ctaLabel: "Apply Now",
-    ctaPath: ROUTES.NOMINATIONS,
+    id: "elections-2026",
+    message: "Nominations for the 2026 Leadership Cycle are open.",
+    ctaLabel: "Read the rules",
+    ctaPath: `${ROUTES.RESOURCES_CONSTITUTION}#article-5`,
     deadline: "2026-12-31T23:59:59Z",
     startsAt: "2026-01-01T00:00:00Z",
     endsAt: "2026-12-31T23:59:59Z",

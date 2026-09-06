@@ -4,31 +4,23 @@ import resourcesData, { resourcesByGroup } from "./resourcesData";
 // navLinks.js
 // Single data source for the primary navigation.
 //
+// NOMINATIONS REMOVED
+// The Nominations page has been retired. The Alliance's nomination and
+// election rules are not a separate page — they are Article 5 of the
+// Constitution, which is published in full under Resources. Anyone looking
+// for "how do elections work" finds the actual governing text rather than
+// a summary that could drift out of step with it.
+//
 // WHY THE RESOURCES SUBMENU IS DERIVED, NOT TYPED
 // Every document's label, path, status and length already exist in
 // data/resourcesData.js. Retyping them here would create a second source
-// of truth that silently drifts — a renamed policy or changed anchor
-// would keep working on the Resources page while the dropdown quietly
-// pointed somewhere wrong. Deriving means adding a document to the
+// of truth that silently drifts. Deriving means adding a document to the
 // registry puts it in the nav automatically, correctly grouped.
 //
 // TWO SHAPES, ON PURPOSE
-//   children    — flat list. Every existing consumer (mobile menu, any
-//                 future sitemap) keeps working untouched.
-//   childGroups — the same items grouped, with status and meta attached,
-//                 for Navbar's richer dropdown panel. A consumer that
-//                 ignores this renders exactly as before, so the richer
-//                 menu is an enhancement rather than a breaking change.
-//
-// Pending documents are INCLUDED (the Manifesto shows in the dropdown)
-// because its page renders an honest "not yet published" state rather
-// than a dead end. It's marked `pending` so the menu can say so up front
-// instead of letting someone click through to find out.
-//
-// Publications is appended manually: it has a page and route but no
-// registry entries yet, so it can't be derived. When the first
-// publication lands it arrives through resourcesByGroup and this manual
-// entry should be deleted.
+//   children    — flat list, for the mobile menu and any other consumer.
+//   childGroups — grouped, with status and meta, for Navbar's dropdown.
+// A consumer that ignores childGroups renders exactly as before.
 
 const documentGroups = resourcesByGroup.map((group) => ({
   label: group.label,
@@ -62,7 +54,6 @@ const navLinks = [
   {
     label: "Resources",
     path: ROUTES.RESOURCES,
-    // Flat — kept for the mobile menu and any other existing consumer.
     children: [
       ...resourcesData.map((doc) => ({
         label: doc.shortTitle || doc.title,
@@ -71,11 +62,9 @@ const navLinks = [
       })),
       { label: "Publications", path: ROUTES.RESOURCES_PUBLICATIONS, status: "available" },
     ],
-    // Grouped — used by Navbar's dropdown panel.
     childGroups: resourceGroups,
   },
   { label: "Media", path: ROUTES.MEDIA },
-  { label: "Nominations", path: ROUTES.NOMINATIONS },
   { label: "Contact Us", path: ROUTES.CONTACT },
 ];
 
