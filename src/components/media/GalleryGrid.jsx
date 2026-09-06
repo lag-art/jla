@@ -16,33 +16,39 @@ import mediaItems from "../../data/mediaItems";
 // The Media page's main gallery. id="gallery" because MediaHero's
 // "Browse the gallery" chip links to #gallery — renaming it breaks that.
 //
-// WHY THIS ISN'T JUST MediaPreview AT FULL SIZE
-// MediaPreview shows five items and opens one in a lightbox. A real
-// gallery has to let you move BETWEEN images once you're in the lightbox —
-// otherwise every image means close, find the next one, reopen. So this
-// adds prev/next, arrow-key navigation, wrap-around at the ends, and a
-// position counter. That navigation is the actual difference between a
-// preview and a gallery.
+// WHY THIS ISN'T MediaPreview AT FULL SIZE
+// MediaPreview shows five items and opens one in a lightbox. A gallery has
+// to let you move BETWEEN items once you're in there — otherwise every
+// image means close, find the next, reopen. So this adds prev/next,
+// arrow-key navigation, wrap-around, and a position counter. That
+// navigation is the actual difference between a preview and a gallery.
+//
+// VIDEO PLAYS HERE, IN THE LIGHTBOX
+// An item with a real `videoUrl` plays inline rather than showing its
+// poster and telling the reader to go find VideoSection. Two consequences
+// handled below: the poster image is NOT rendered above a playing video
+// (you'd see the same frame twice, once static and once as the player's
+// own poster), and a video WITHOUT a source still shows its poster plus an
+// honest "not published yet" line rather than a control that does nothing.
+// The distinction is `videoUrl` presence, never `type` alone.
 //
 // Heuristics baked in:
-//   - Filters are derived from what's in the data. If the gallery is all
-//     photos, no filter bar renders at all — a filter with one option is
-//     a control that can't do anything. Each filter shows its count so
-//     nobody clicks "Videos" to find one item.
-//   - Lightbox navigation moves within the FILTERED set, not the whole
-//     gallery. Filtering to videos and pressing next should stay on
-//     videos; jumping to a photo would silently undo the filter.
+//   - Filters derive from what's actually in the data. All photos and no
+//     video means no filter bar at all — a filter with one option is a
+//     control that can't do anything. Each filter shows its count.
+//   - Lightbox navigation moves within the FILTERED set. Filtering to
+//     videos and pressing next should stay on videos; jumping to a photo
+//     would silently undo the filter.
 //   - Bento spans are computed from position in the filtered list, not
-//     hardcoded per item — so the layout stays balanced no matter which
-//     filter is active or how many items exist.
-//   - Arrow keys are bound only while the lightbox is open, and removed
-//     on close, so they never hijack normal page scrolling.
-//   - Every tile is a real <button> with a descriptive label rather than
-//     a clickable div, so the gallery is keyboard-navigable and each item
-//     announces what it opens.
-//   - Videos are marked by data (type === "video"), never by a hardcoded
-//     index, and the play affordance is always visible on touch rather
-//     than hover-only — a hover-revealed control is unreachable on a phone.
+//     hardcoded per item, so the layout stays balanced under any filter.
+//   - Arrow keys bind only while the lightbox is open, and unbind on
+//     close, so they never hijack page scrolling.
+//   - Every tile is a real <button> with a descriptive label rather than a
+//     clickable div — keyboard-navigable, and each announces what it opens.
+//   - The play badge is always visible, never hover-only: a hover-revealed
+//     control simply doesn't exist on a phone.
+//   - Changing filter closes the lightbox, since activeIndex would
+//     otherwise point into a different list.
 
 const FILTERS = [
   { id: "all", label: "All" },
@@ -51,14 +57,16 @@ const FILTERS = [
 ];
 
 // Deterministic bento pattern: every 6th tile is wide, every 6th offset by
-// 3 is tall. Based on index within the filtered list so the rhythm holds
-// under any filter.
+// 3 is tall. Keyed to index within the filtered list so the rhythm holds.
 const spanFor = (index) => {
   const slot = index % 6;
   if (slot === 0) return "sm:col-span-2 sm:row-span-2";
   if (slot === 3) return "sm:row-span-2";
   return "";
 };
+
+const isPlayable = (item) =>
+  Boolean(item?.videoUrl || item?.youtubeId || item?.vimeoId);
 
 const GalleryGrid = () => {
   const shouldReduceMotion = useReducedMotion();
@@ -87,13 +95,14 @@ const GalleryGrid = () => {
   );
 
   const activeItem = activeIndex != null ? visible[activeIndex] : null;
+  const activePlays = activeItem?.type === "video" && isPlayable(activeItem);
 
   const step = useCallback(
     (delta) => {
       setActiveIndex((i) => {
         if (i == null || visible.length === 0) return i;
-        // Wrap at both ends — reaching the last image and being stuck is
-        // a dead end in a viewer whose whole job is moving through a set.
+        // Wrap at both ends — being stuck on the last item is a dead end
+        // in a viewer whose whole job is moving through a set.
         return (i + delta + visible.length) % visible.length;
       });
     },
@@ -111,8 +120,6 @@ const GalleryGrid = () => {
     return () => window.removeEventListener("keydown", onKey);
   }, [activeIndex, step]);
 
-  // Changing filter while the lightbox is open would leave activeIndex
-  // pointing into a different list. Close instead of showing a surprise.
   const changeFilter = (id) => {
     setActiveIndex(null);
     setFilter(id);
@@ -135,7 +142,7 @@ const GalleryGrid = () => {
             docket="18"
             eyebrow="Gallery"
             title="Every frame, on the record."
-            description="Photographs and video from the Alliance's summits, outreach, and proceedings."
+            description="Photographs and video from the Alliance's events and proceedings."
           />
 
           {showFilters && (
@@ -173,9 +180,7 @@ const GalleryGrid = () => {
         </div>
 
         {visible.length === 0 ? (
-          <p className="mt-12 py-12 text-center text-(--jla-slate)">
-            Nothing here yet.
-          </p>
+          <p className="mt-12 py-12 text-center text-(--jla-slate)">Nothing here yet.</p>
         ) : (
           <motion.ul
             {...reveal}
@@ -186,9 +191,7 @@ const GalleryGrid = () => {
                 <button
                   type="button"
                   onClick={() => setActiveIndex(i)}
-                  aria-label={`Open ${item.title}${
-                    item.type === "video" ? " (video)" : ""
-                  }`}
+                  aria-label={`Open ${item.title}${item.type === "video" ? " (video)" : ""}`}
                   className="group relative w-full h-full overflow-hidden rounded-md text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--jla-gold) focus-visible:ring-offset-2"
                 >
                   <ImagePlaceholder
@@ -239,27 +242,44 @@ const GalleryGrid = () => {
         {activeItem && (
           <div className="flex flex-col gap-4">
             <div className="relative">
-              <ImagePlaceholder
-                src={activeItem.image}
-                ratio="16/9"
-                rounded="md"
-                alt={activeItem.title}
-                className="w-full"
-              />
+              {activePlays ? (
+                // Plays in place. The player carries its own poster, so the
+                // still below is deliberately not rendered as well.
+                <video
+                  src={activeItem.videoUrl}
+                  poster={activeItem.image}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="w-full rounded-md bg-black"
+                >
+                  Your browser doesn’t support embedded video.
+                </video>
+              ) : (
+                <ImagePlaceholder
+                  src={activeItem.image}
+                  ratio="16/9"
+                  rounded="md"
+                  alt={activeItem.title}
+                  className="w-full"
+                />
+              )}
 
-              {visible.length > 1 && (
+              {/* Arrows sit over a still, but would cover a video's own
+                  controls — so they move below the player instead. */}
+              {visible.length > 1 && !activePlays && (
                 <>
                   <button
                     onClick={() => step(-1)}
                     aria-label="Previous item"
-                    className="absolute left-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-(--jla-navy-950)/70 text-white hover:bg-(--jla-navy-950) transition-colors duration-200"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-11 h-11 rounded-full bg-(--jla-navy-950)/70 text-white hover:bg-(--jla-navy-950) transition-colors duration-200"
                   >
                     <FaChevronLeft aria-hidden="true" className="text-xs" />
                   </button>
                   <button
                     onClick={() => step(1)}
                     aria-label="Next item"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-(--jla-navy-950)/70 text-white hover:bg-(--jla-navy-950) transition-colors duration-200"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-11 h-11 rounded-full bg-(--jla-navy-950)/70 text-white hover:bg-(--jla-navy-950) transition-colors duration-200"
                   >
                     <FaChevronRight aria-hidden="true" className="text-xs" />
                   </button>
@@ -267,9 +287,21 @@ const GalleryGrid = () => {
               )}
             </div>
 
-            <p className="text-sm text-(--jla-slate) leading-relaxed">{activeItem.caption}</p>
+            {/* A video without a source: poster stays, honest line beneath */}
+            {activeItem.type === "video" && !activePlays && (
+              <p className="text-sm text-(--jla-navy) bg-(--jla-navy-100) rounded-md px-4 py-3">
+                This recording isn’t published yet — what you’re seeing is the
+                poster frame.
+              </p>
+            )}
 
-            <div className="flex items-center justify-between gap-4 pt-2 border-t border-(--jla-line)">
+            {activeItem.caption && (
+              <p className="text-sm text-(--jla-slate) leading-relaxed">
+                {activeItem.caption}
+              </p>
+            )}
+
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-(--jla-line)">
               <span className="flex items-center gap-2 font-mono text-[11px] text-(--jla-slate)">
                 <FaImages aria-hidden="true" />
                 {activeIndex + 1} of {visible.length}
@@ -279,18 +311,32 @@ const GalleryGrid = () => {
                   </span>
                 )}
               </span>
-              <span className="hidden sm:block font-mono text-[10px] text-(--jla-slate)/60">
-                Use ← → to move between items
-              </span>
-            </div>
 
-            {activeItem.type === "video" && (
-              <p className="text-sm text-(--jla-navy) bg-(--jla-navy-100) rounded-md px-4 py-3">
-                Video playback isn’t wired up yet — this is the thumbnail. Add
-                the source to this item in <code>data/mediaItems.js</code> when
-                the file is available.
-              </p>
-            )}
+              {/* Playing a video hides the overlay arrows, so navigation
+                  moves here — otherwise a video would be a dead end. */}
+              {visible.length > 1 && activePlays ? (
+                <span className="flex items-center gap-2">
+                  <button
+                    onClick={() => step(-1)}
+                    aria-label="Previous item"
+                    className="flex items-center justify-center w-9 h-9 rounded-full border border-(--jla-line) text-(--jla-slate) hover:border-(--jla-gold) hover:text-(--jla-navy) transition-colors duration-200"
+                  >
+                    <FaChevronLeft aria-hidden="true" className="text-[10px]" />
+                  </button>
+                  <button
+                    onClick={() => step(1)}
+                    aria-label="Next item"
+                    className="flex items-center justify-center w-9 h-9 rounded-full border border-(--jla-line) text-(--jla-slate) hover:border-(--jla-gold) hover:text-(--jla-navy) transition-colors duration-200"
+                  >
+                    <FaChevronRight aria-hidden="true" className="text-[10px]" />
+                  </button>
+                </span>
+              ) : (
+                <span className="hidden sm:block font-mono text-[10px] text-(--jla-slate)/60">
+                  Use ← → to move between items
+                </span>
+              )}
+            </div>
           </div>
         )}
       </Modal>
