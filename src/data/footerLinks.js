@@ -26,7 +26,6 @@ export const footerColumns = [
     title: "Get Involved",
     links: [
       { label: "Membership", path: ROUTES.JOIN },
-      { label: "Nominations", path: ROUTES.NOMINATIONS },
       { label: "Contact Us", path: ROUTES.CONTACT },
       { label: "Keep me Updated", path: ROUTES.CONTACT },
     ],

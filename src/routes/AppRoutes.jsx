@@ -17,7 +17,7 @@ const ResourcesManifestoPage = lazy(() => import("../pages/ResourcesManifestoPag
 const ResourcesPublicationsPage = lazy(() => import("../pages/ResourcesPublicationsPage"));
 
 const MediaPage = lazy(() => import("../pages/MediaPage"));
-const NominationsPage = lazy(() => import("../pages/NominationsPage"));
+
 const ContactPage = lazy(() => import("../pages/ContactPage"));
 const JoinPage = lazy(() => import("../pages/JoinPage"));
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
@@ -39,7 +39,7 @@ const AppRoutes = () => {
           <Route path={ROUTES.RESOURCES_PUBLICATIONS} element={<ResourcesPublicationsPage />} />
 
           <Route path={ROUTES.MEDIA} element={<MediaPage />} />
-          {/* <Route path={ROUTES.NOMINATIONS} element={<NominationsPage />} /> */}
+          
           <Route path={ROUTES.CONTACT} element={<ContactPage />} />
           <Route path={ROUTES.JOIN} element={<JoinPage />} />
 

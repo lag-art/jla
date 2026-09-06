@@ -14,7 +14,6 @@ const ROUTES = {
   RESOURCES_PUBLICATIONS: "/resources/publications",
 
   MEDIA: "/media",
-  NOMINATIONS: "/nominations",
   CONTACT: "/contact",
   JOIN: "/join",
 
