@@ -86,7 +86,7 @@ const MediaPreview = () => {
             docket="05"
             eyebrow="Media"
             title="Moments from the movement."
-            description="Summits, outreach days, and everything in between — a look at JLA in action."
+            description="Summits, outreach days, and everything in between a look at JLA in action."
           />
           <div className="hidden lg:block shrink-0">
             <Button to={ROUTES.MEDIA} variant="secondary" iconRight={FaArrowRight}>

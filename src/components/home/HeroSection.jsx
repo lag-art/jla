@@ -141,16 +141,16 @@ const HeroSection = () => {
           className="font-(family-name:--font-display) font-semibold leading-[1.08] text-balance
                      text-[clamp(2rem,1.2rem+3.6vw,4.5rem)] max-w-3xl"
         >
-          Principled Leadership,{" "}
-          <span className="text-(--jla-gold)">Grounded in Law.</span>
+          Where Law,{" "}
+          <span className="text-(--jla-gold)"> Meets Leadership.</span>
         </motion.h1>
 
         <motion.p
           {...item}
           className="text-white/80 text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl text-pretty"
         >
-          We equip a new generation of leaders with the integrity, discipline, and
-          legal literacy to serve justly — and to hold power accountable.
+          Empowering law students through principled leadership, academic excellence, 
+          and a strong commitment to justice, integrity, and accountability.
         </motion.p>
 
         {/* Buttons go full-width on the narrowest phones — two half-width

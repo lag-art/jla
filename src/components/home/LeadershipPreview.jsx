@@ -53,7 +53,7 @@ const LeadershipPreview = () => {
             docket="03"
             eyebrow="Our Leadership"
             title="Elected to serve, held to account."
-            description="Meet the executive team leading JLA's mission — chosen by their peers to represent every law student in the faculty."
+            description="Meet the executive team leading JLA's mission chosen by their peers to represent every law student in the faculty."
           />
           <div className="hidden lg:block shrink-0">
             <Button to={ROUTES.LEADERSHIP} variant="secondary" iconRight={FaArrowRight}>

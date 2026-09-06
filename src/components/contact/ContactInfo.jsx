@@ -204,7 +204,7 @@ const ContactInfo = () => {
                 </h4>
                 <p className="text-sm text-(--jla-slate) leading-relaxed mt-1.5">
                   Eligibility, nomination and election procedure are governed by
-                  the Constitution rather than by a separate set of rules — read
+                  the Constitution rather than by a separate set of rules read
                   the article itself rather than relying on a summary.
                 </p>
                 <Link

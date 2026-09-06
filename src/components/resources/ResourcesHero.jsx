@@ -125,7 +125,7 @@ const ResourcesHero = () => {
         </h1>
 
         <p className="mt-4 text-sm sm:text-base lg:text-lg text-white/75 leading-relaxed max-w-xl text-pretty">
-          Every document that governs the Alliance — readable in full, searchable,
+          Every document that governs the Alliance readable in full, searchable,
           and free to download. No member should have to ask what the rules are.
         </p>
 

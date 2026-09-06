@@ -78,7 +78,7 @@ const resourcesData = [
     status: "available",
     group: "governing",
     summary:
-      "The founding instrument of the Alliance — establishing its name, motto, purpose, membership, leadership, elections, finances, and discipline across ten articles.",
+      "The founding instrument of the Alliance establishing its name, motto, purpose, membership, leadership, elections, finances, and discipline across ten articles.",
     route: ROUTES.RESOURCES_CONSTITUTION,
     image: constitutionImg,
     pdfUrl: "/documents/jlaconstitution.pdf",
@@ -110,7 +110,7 @@ const resourcesData = [
     status: "available",
     group: "policies",
     summary:
-      "The procedure followed when a member or office bearer is alleged to have contravened the Constitution — from complaint through hearing, verdict, and appeal.",
+      "The procedure followed when a member or office bearer is alleged to have contravened the Constitution from complaint through hearing, verdict, and appeal.",
     route: `${ROUTES.RESOURCES}#disciplinary-act`,
     image: disciplinaryImg,
     pdfUrl: "/documents/jladisciplinary.pdf",

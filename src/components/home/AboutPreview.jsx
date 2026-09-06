@@ -77,7 +77,7 @@ const AboutPreview = () => {
               docket="02"
               eyebrow="Who We Are"
               title="Where law meets leadership."
-              description="Juris Leadership Alliance is a movement of law students shaping principled legal minds — committed to academic excellence and to meaningful change within the faculty and beyond."
+              description="Juris Leadership Alliance is a movement of law students shaping principled legal minds committed to academic excellence and to meaningful change within the faculty and beyond."
             />
 
             {/* Labels only — see note on DRAFT descriptions */}

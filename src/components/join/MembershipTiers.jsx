@@ -106,7 +106,7 @@ const MembershipTiers = () => {
           docket="25"
           eyebrow="Membership"
           title="One membership. No fee. One way in."
-          description="There are no tiers and nothing to pay — the Constitution rules out financial barriers to joining."
+          description="There are no tiers and nothing to pay the Constitution rules out financial barriers to joining."
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.05fr] gap-8 lg:gap-12 mt-10 sm:mt-12 items-start">
@@ -137,7 +137,7 @@ const MembershipTiers = () => {
                   Join the WhatsApp community
                 </h3>
                 <p className="text-white/75 leading-relaxed mt-2">
-                  That's the whole process. Join the group and you're a member —
+                  That's the whole process. Join the group and you're a member
                   no form, no fee, no waiting on approval.
                 </p>
               </div>
@@ -157,8 +157,7 @@ const MembershipTiers = () => {
               </a>
 
               <p className="text-xs text-white/50 leading-relaxed">
-                Opens WhatsApp and takes you to the group invite. Your number
-                becomes visible to other members of the group.
+                welcome to the party.
               </p>
             </div>
           </motion.div>

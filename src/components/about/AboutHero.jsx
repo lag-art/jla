@@ -115,7 +115,7 @@ const AboutHero = () => {
 
         <p className="mt-4 text-sm sm:text-base lg:text-lg text-white/75 leading-relaxed max-w-xl text-pretty">
           A dynamic movement dedicated to shaping a new generation of
-          principled legal minds — rooted in justice, integrity, and
+          principled legal minds rooted in justice, integrity, and
           transformative leadership.
         </p>
       </motion.div>

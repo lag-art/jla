@@ -63,7 +63,7 @@ const ContactPreview = () => {
               docket="09"
               eyebrow="Get In Touch"
               title="Visit or reach our Nairobi office."
-              description="Whether you have a question, a proposal, or just want to learn more — we'd love to hear from you."
+              description="Whether you have a question, a proposal, or just want to learn more we'd love to hear from you."
             />
 
             <ul className="flex flex-col gap-5 mt-8">
@@ -115,7 +115,7 @@ const ContactPreview = () => {
           >
             <iframe
               src={contactInfo.mapEmbedSrc}
-              title="Juris Leadership Alliance — Nairobi office location"
+              title="Juris Leadership Alliance Nairobi office location"
               className="absolute inset-0 w-full h-full"
               style={{ border: 0 }}
               allowFullScreen

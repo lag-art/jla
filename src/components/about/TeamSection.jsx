@@ -58,7 +58,7 @@ const TeamSection = () => {
             docket="13"
             eyebrow="The Team"
             title="Who leads the Alliance"
-            description="Elected representatives serving the faculty — accountable to the students who chose them."
+            description="Elected representatives serving the faculty accountable to the students who chose them."
           />
           <div className="hidden lg:block shrink-0">
             <Button to={ROUTES.LEADERSHIP} variant="secondary" iconRight={FaArrowRight}>

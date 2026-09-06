@@ -68,7 +68,7 @@ const MissionVision = () => {
           docket="10"
           eyebrow="What Drives Us"
           title="Our Mission & Vision"
-          description="Two commitments that shape every decision JLA makes — what we stand for today, and what we're building toward."
+          description="Two commitments that shape every decision JLA makes what we stand for today, and what we're building toward."
         />
       </div>
 

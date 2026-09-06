@@ -121,8 +121,7 @@ const JoinHero = () => {
         </h1>
 
         <p className="mt-4 text-sm sm:text-base lg:text-lg text-white/75 leading-relaxed max-w-xl text-pretty">
-          Join a community that studies the law and lives its highest ideals —
-          academic support, mentorship, and a real voice in faculty decisions.
+          Join a community that studies the law and lives its highest ideals academic support, mentorship, and a real voice in faculty decisions.
         </p>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mt-7 w-full sm:w-auto">

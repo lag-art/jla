@@ -67,7 +67,7 @@ const JoinCTA = () => {
 
         <p className="text-base sm:text-lg leading-relaxed text-(--jla-navy-950)/80 max-w-md">
           Add your voice to a community shaping justice, leadership, and
-          academic excellence — one member at a time.
+          academic excellence one member at a time.
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-3">

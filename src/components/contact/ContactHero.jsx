@@ -124,7 +124,7 @@ const ContactHero = () => {
         </h1>
 
         <p className="mt-4 text-sm sm:text-base lg:text-lg text-white/75 leading-relaxed max-w-xl text-pretty">
-          A question, a proposal, or something that needs raising — reach the
+          A question, a proposal, or something that needs raising reach the
           leadership directly, or use the form below.
         </p>
 

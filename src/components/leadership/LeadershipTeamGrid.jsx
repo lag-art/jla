@@ -94,7 +94,7 @@ const LeadershipTeamGrid = () => {
           docket="14"
           eyebrow="The Roster"
           title="Meet your representatives"
-          description="Every member of the Alliance's leadership — who they are, and what they're responsible for."
+          description="Every member of the Alliance's leadership who they are, and what they're responsible for."
         />
 
         <div className="flex flex-col gap-14 sm:gap-16 mt-10 sm:mt-12">

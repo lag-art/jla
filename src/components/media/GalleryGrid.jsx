@@ -290,7 +290,7 @@ const GalleryGrid = () => {
             {/* A video without a source: poster stays, honest line beneath */}
             {activeItem.type === "video" && !activePlays && (
               <p className="text-sm text-(--jla-navy) bg-(--jla-navy-100) rounded-md px-4 py-3">
-                This recording isn’t published yet — what you’re seeing is the
+                This recording isn’t published yet what you’re seeing is the
                 poster frame.
               </p>
             )}

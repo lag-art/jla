@@ -55,7 +55,7 @@ const ResourcesPreview = () => {
             docket="04"
             eyebrow="Resources"
             title="Every governing document, in one place."
-            description="Our constitution, policies, and procedures — open for every member to read."
+            description="Our constitution, policies, and procedures open for every member to read."
           />
           <div className="hidden lg:block shrink-0">
             <Button to={ROUTES.RESOURCES} variant="secondary" iconRight={FaArrowRight}>

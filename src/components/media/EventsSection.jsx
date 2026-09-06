@@ -78,7 +78,7 @@ const EventsSection = () => {
           docket="22"
           eyebrow="Events"
           title="Come out with us."
-          description="What the Alliance is putting on next — and how to join in."
+          description="What the Alliance is putting on next and how to join in."
           tone="dark"
         />
 

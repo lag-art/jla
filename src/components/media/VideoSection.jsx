@@ -185,7 +185,7 @@ const VideoSection = () => {
                           className="mt-0.5 shrink-0 text-(--jla-gold)"
                         />
                         <span>
-                          This recording isn’t published yet — what you’re seeing
+                          This recording isn’t published yet  what you’re seeing
                           is the poster frame. It’ll play here once the video is
                           available.
                         </span>

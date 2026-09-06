@@ -119,7 +119,7 @@ const MediaHero = () => {
         </h1>
 
         <p className="mt-4 text-sm sm:text-base lg:text-lg text-white/75 leading-relaxed max-w-xl">
-          Summits, outreach days, moot courts and townhalls — the work of the
+          Summits, outreach days, moot courts and townhalls the work of the
           Alliance as it actually happened.
         </p>
 
